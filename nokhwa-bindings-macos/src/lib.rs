@@ -361,6 +361,7 @@ mod internal {
 
     #[allow(non_upper_case_globals)]
     fn raw_fcc_to_frameformat(raw: OSType) -> Option<FrameFormat> {
+        println!("frame raw: {:?}", raw);
         match raw {
             kCMVideoCodecType_422YpCbCr8 | kCMPixelFormat_422YpCbCr8_yuvs => {
                 Some(FrameFormat::YUYV)
@@ -369,7 +370,7 @@ mod internal {
             kCMPixelFormat_8IndexedGray_WhiteIsZero => Some(FrameFormat::GRAY),
             kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
             | kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-            | 875704438 => Some(FrameFormat::NV12),
+            | 875704438 => Some(FrameFormat::YUYV),
             kCMPixelFormat_24RGB => Some(FrameFormat::RAWRGB),
             _ => None,
         }
@@ -515,6 +516,7 @@ mod internal {
             AVCaptureDeviceType::Telephoto,
             AVCaptureDeviceType::TrueDepth,
             AVCaptureDeviceType::ExternalUnknown,
+            AVCaptureDeviceType::External,
         ])?
         .devices())
     }
@@ -532,7 +534,7 @@ mod internal {
         );
         let misc = nsstr_to_str(unsafe { msg_send![device, uniqueID] });
 
-        CameraInfo::new(name.as_ref(), &description, misc.as_ref(), index)
+        CameraInfo::new(name.as_ref(), &description, misc.as_ref(), &index)
     }
 
     #[derive(Copy, Clone, Debug, Hash, Ord, PartialOrd, Eq, PartialEq)]
@@ -545,6 +547,7 @@ mod internal {
         Telephoto,
         TrueDepth,
         ExternalUnknown,
+        External,
     }
 
     impl From<AVCaptureDeviceType> for *mut Object {
@@ -572,6 +575,7 @@ mod internal {
                 AVCaptureDeviceType::ExternalUnknown => {
                     str_to_nsstr("AVCaptureDeviceTypeExternalUnknown")
                 }
+                AVCaptureDeviceType::External => str_to_nsstr("AVCaptureDeviceTypeExternal"),
             }
         }
     }
