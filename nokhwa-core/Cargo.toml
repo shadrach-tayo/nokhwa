@@ -19,7 +19,7 @@ docs-features = ["serialize", "wgpu-types"]
 conversions = ["dcv-color-primitives", "yuvutils-rs", "mozjpeg"]
 async = ["async-trait"]
 test-fail-warnings = []
-
+mjpeg = ["mozjpeg"]
 
 [dependencies]
 thiserror = "1.0"
